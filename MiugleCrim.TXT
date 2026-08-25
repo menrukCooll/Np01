@@ -1470,6 +1470,15 @@
         end
 
         function Library:Unload() 
+            for Flag, SetFunc in pairs(Library.ConfigFlags) do
+                local Value = Library.Flags[Flag]
+                if type(Value) == "boolean" then
+                    pcall(SetFunc, false)
+                elseif type(Value) == "table" and Value.Active ~= nil then
+                    pcall(SetFunc, false)
+                end
+            end
+
             if Library.Items then 
                 Library.Items:Destroy()
             end
@@ -1480,7 +1489,10 @@
             
             for _,connection in Library.Connections do 
                 connection:Disconnect() 
-                connection = nil 
+            end
+
+            if getgenv().notifications_screenGui then
+                getgenv().notifications_screenGui:Destroy()
             end
 
             getgenv().Library = nil 
@@ -5159,6 +5171,10 @@
                 Library.TweeningSpeed = int
             end})
 
+            Section:Button({Name = "Unload Hub", Callback = function()
+                Library:Unload()
+            end})
+
             Section:Label({Name = "Inline"}):Colorpicker({Flag = "Inline", Callback = function(color, alpha) 
                 Library:RefreshTheme("inline", color) 
 
@@ -6104,3 +6120,4 @@
 -- 
 
 return Library, Notifications, themes
+
