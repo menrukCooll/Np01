@@ -2306,84 +2306,84 @@
                 -- 
 
                 -- Page directory 
-                    Items.Page = Library:Create( "ScrollingFrame" , {
-                        Parent = Library.Other;
-                        Name = "\0";
-                        Visible = false;
-                        BackgroundTransparency = 1;
-                        Position = dim2(0, 2, 0, 2);
-                        BorderColor3 = rgb(0, 0, 0);
-                        Size = dim2(1, -4, 1, -4);
-                        BorderSizePixel = 0;
-                        BackgroundColor3 = rgb(255, 255, 255);
-                        Active = true;
-                        ScrollingEnabled = true;
-                        ScrollBarThickness = 0; 
-                        CanvasSize = dim2(0, 0, 0, 0);
-                        ScrollingDirection = Enum.ScrollingDirection.Y;
-                        ClipsDescendants = true;
-                    });
-                    
-                    Library:Create( "UIListLayout" , {
-                        FillDirection = Enum.FillDirection.Horizontal;
-                        HorizontalFlex = Enum.UIFlexAlignment.Fill;
-                        Parent = Items.Page;
-                        Padding = dim(0, 4);
-                        SortOrder = Enum.SortOrder.LayoutOrder;
-                    });
-                    
-                    Items.Left = Library:Create( "Frame" , {
-                        Parent = Items.Page;
-                        BackgroundTransparency = 1;
-                        Name = "\0";
-                        BorderColor3 = rgb(0, 0, 0);
-                        Size = dim2(0, 100, 1, 0);
-                        BorderSizePixel = 0;
-                        BackgroundColor3 = rgb(255, 255, 255)
-                    });
-                    
-                    local leftList = Library:Create( "UIListLayout" , {
-                        Parent = Items.Left;
-                        Padding = dim(0, 4);
-                        SortOrder = Enum.SortOrder.LayoutOrder
-                    });
-                    
-                    Items.Right = Library:Create( "Frame" , {
-                        Parent = Items.Page;
-                        BackgroundTransparency = 1;
-                        Name = "\0";
-                        BorderColor3 = rgb(0, 0, 0);
-                        Size = dim2(0, 100, 1, 0);
-                        BorderSizePixel = 0;
-                        BackgroundColor3 = rgb(255, 255, 255)
-                    });
-                    
-                    local rightList = Library:Create( "UIListLayout" , {
-                        Parent = Items.Right;
-                        Padding = dim(0, 4);
-                        SortOrder = Enum.SortOrder.LayoutOrder;
-                    });
-                    
-                    local function updateCanvas()
-                        task.defer(function()
-                            local leftH = leftList.AbsoluteContentSize.Y
-                            local rightH = rightList.AbsoluteContentSize.Y
-                            local maxContentH = math.max(leftH, rightH)
-                            
-                            local pageH = Items.Page.AbsoluteWindowSize.Y
-                            if pageH == 0 then pageH = 500 end
-                            
-                            local newColH = math.max(pageH, maxContentH)
-                            
-                            Items.Left.Size = dim2(0, 100, 0, newColH)
-                            Items.Right.Size = dim2(0, 100, 0, newColH)
-                            Items.Page.CanvasSize = dim2(0, 0, 0, maxContentH + 15)
-                        end)
-                    end
-                    
-                    leftList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
-                    rightList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
-                    Items.Page:GetPropertyChangedSignal("AbsoluteWindowSize"):Connect(updateCanvas)
+	                    Items.Page = Library:Create( "ScrollingFrame" , {
+	                        Parent = Library.Other;
+	                        Name = "\0";
+	                        Visible = false;
+	                        BackgroundTransparency = 1;
+	                        Position = dim2(0, 2, 0, 2);
+	                        BorderColor3 = rgb(0, 0, 0);
+	                        Size = dim2(1, -4, 1, -4);
+	                        BorderSizePixel = 0;
+	                        BackgroundColor3 = rgb(255, 255, 255);
+	                        Active = true;
+	                        ScrollingEnabled = true;
+	                        ScrollBarThickness = 0; 
+	                        CanvasSize = dim2(0, 0, 0, 0);
+	                        ScrollingDirection = Enum.ScrollingDirection.Y;
+	                        ClipsDescendants = true;
+	                    });
+	                    
+	                    Library:Create( "UIListLayout" , {
+	                        FillDirection = Enum.FillDirection.Horizontal;
+	                        HorizontalFlex = Enum.UIFlexAlignment.Fill;
+	                        Parent = Items.Page;
+	                        Padding = dim(0, 4);
+	                        SortOrder = Enum.SortOrder.LayoutOrder;
+	                    });
+	                    
+	                    Items.Left = Library:Create( "Frame" , {
+	                        Parent = Items.Page;
+	                        BackgroundTransparency = 1;
+	                        Name = "\0";
+	                        BorderColor3 = rgb(0, 0, 0);
+	                        Size = dim2(0, 100, 1, 0);
+	                        BorderSizePixel = 0;
+	                        BackgroundColor3 = rgb(255, 255, 255)
+	                    });
+	                    
+	                    local leftList = Library:Create( "UIListLayout" , {
+	                        Parent = Items.Left;
+	                        Padding = dim(0, 4);
+	                        SortOrder = Enum.SortOrder.LayoutOrder
+	                    });
+	                    
+	                    Items.Right = Library:Create( "Frame" , {
+	                        Parent = Items.Page;
+	                        BackgroundTransparency = 1;
+	                        Name = "\0";
+	                        BorderColor3 = rgb(0, 0, 0);
+	                        Size = dim2(0, 100, 1, 0);
+	                        BorderSizePixel = 0;
+	                        BackgroundColor3 = rgb(255, 255, 255)
+	                    });
+	                    
+	                    local rightList = Library:Create( "UIListLayout" , {
+	                        Parent = Items.Right;
+	                        Padding = dim(0, 4);
+	                        SortOrder = Enum.SortOrder.LayoutOrder;
+	                    });
+	                    
+	                    local function updateCanvas()
+	                        task.defer(function()
+	                            local leftH = leftList.AbsoluteContentSize.Y
+	                            local rightH = rightList.AbsoluteContentSize.Y
+	                            local maxContentH = math.max(leftH, rightH)
+	                            
+	                            local pageH = Items.Page.AbsoluteWindowSize.Y
+	                            if pageH == 0 then pageH = 500 end
+	                            
+	                            local newColH = math.max(pageH, maxContentH)
+	                            
+	                            Items.Left.Size = dim2(0, 100, 0, newColH)
+	                            Items.Right.Size = dim2(0, 100, 0, newColH)
+	                            Items.Page.CanvasSize = dim2(0, 0, 0, maxContentH + 15)
+	                        end)
+	                    end
+	                    
+	                    leftList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+	                    rightList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+	                    Items.Page:GetPropertyChangedSignal("AbsoluteWindowSize"):Connect(updateCanvas)
                 -- 
             end 
 
@@ -2453,6 +2453,14 @@
 
             self.Items.Left:Destroy()
             self.Items.Right:Destroy()
+            
+            for _, child in ipairs(self.Items.Page:GetChildren()) do
+                if child:IsA("UIListLayout") then child:Destroy() end
+            end
+            
+            self.Items.Page.AutomaticCanvasSize = Enum.AutomaticSize.None
+            self.Items.Page.CanvasSize = dim2(0, 0, 0, 0)
+            self.Items.Page.ScrollingEnabled = false
 
             local Items = Cfg.Items; do 
                 Library:Create( "UIListLayout" , {
@@ -2469,7 +2477,7 @@
                     BackgroundTransparency = 1;
                     Name = "\0";
                     BorderColor3 = rgb(0, 0, 0);
-                    Size = dim2(0, 100, 0, 100);
+                    Size = dim2(1, 0, 1, 0);
                     BorderSizePixel = 0;
                     BackgroundColor3 = rgb(255, 255, 255)
                 });
