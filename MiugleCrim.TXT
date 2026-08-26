@@ -3307,25 +3307,78 @@
                         });	Library:Themify(SubItems.UIStroke, "outline", "Color");
                     -- 
                         
-                    -- Page directory  
-                        SubItems.Elements = Library:Create( "Frame" , {
-                            BorderColor3 = rgb(0, 0, 0);
-                            Parent = Library.Other; -- SubItems.Inline
-                            Name = "\0";
-                            Visible = false;
-                            BackgroundTransparency = 1;
-                            Position = dim2(0, 6, 0, 26);
-                            Size = dim2(1, 1, 0, 0);
-                            BorderSizePixel = 0;
-                            AutomaticSize = Enum.AutomaticSize.Y;
-                            BackgroundColor3 = rgb(255, 255, 255)
-                        });	Library:Themify(SubItems.Elements, "text_outline", "BackgroundColor3")   
+                    -- Page directory 
+                    Items.Page = Library:Create( "ScrollingFrame" , {
+                        Parent = Library.Other; -- self.Items.PageHolder
+                        Name = "\0";
+                        Visible = false;
+                        BackgroundTransparency = 1;
+                        Position = dim2(0, 2, 0, 2);
+                        BorderColor3 = rgb(0, 0, 0);
+                        Size = dim2(1, -4, 1, -4);
+                        BorderSizePixel = 0;
+                        BackgroundColor3 = rgb(255, 255, 255);
+                        
 
-                        Library:Create( "UIListLayout" , {
-                            Parent = SubItems.Elements;
-                            Padding = dim(0, 4);
-                            SortOrder = Enum.SortOrder.LayoutOrder
-                        });
+                        Active = true;
+                        ScrollingEnabled = true;
+                        ScrollBarThickness = 0; 
+                        CanvasSize = dim2(0, 0, 0, 0);
+                        AutomaticCanvasSize = Enum.AutomaticSize.Y;
+                        ScrollingDirection = Enum.ScrollingDirection.Y;
+                        ClipsDescendants = true;
+                    });
+                    
+                    Library:Create( "UIListLayout" , {
+                        FillDirection = Enum.FillDirection.Horizontal;
+                        HorizontalFlex = Enum.UIFlexAlignment.Fill;
+                        Parent = Items.Page;
+                        Padding = dim(0, 4);
+                        SortOrder = Enum.SortOrder.LayoutOrder;
+
+                    });
+                    
+                    Items.Left = Library:Create( "Frame" , {
+                        Parent = Items.Page;
+                        BackgroundTransparency = 1;
+                        Name = "\0";
+                        BorderColor3 = rgb(0, 0, 0);
+                        Size = dim2(0, 100, 0, 0); 
+                        AutomaticSize = Enum.AutomaticSize.Y;
+                        BorderSizePixel = 0;
+                        BackgroundColor3 = rgb(255, 255, 255)
+                    });
+                    
+                    Library:Create( "UIListLayout" , {
+                        Parent = Items.Left;
+                        Padding = dim(0, 4);
+                        SortOrder = Enum.SortOrder.LayoutOrder
+                    });
+                    
+                    Items.Right = Library:Create( "Frame" , {
+                        Parent = Items.Page;
+                        BackgroundTransparency = 1;
+                        Name = "\0";
+                        BorderColor3 = rgb(0, 0, 0);
+                        Size = dim2(0, 100, 0, 0); 
+                        AutomaticSize = Enum.AutomaticSize.Y; 
+                        BorderSizePixel = 0;
+                        BackgroundColor3 = rgb(255, 255, 255)
+                    });
+                    
+                    Library:Create( "UIListLayout" , {
+                        Parent = Items.Right;
+                        Padding = dim(0, 4);
+                        SortOrder = Enum.SortOrder.LayoutOrder;
+                    });
+                    
+
+                    local function updateCanvas()
+                        local maxY = math.max(Items.Left.AbsoluteSize.Y, Items.Right.AbsoluteSize.Y)
+                        Items.Page.CanvasSize = dim2(0, 0, 0, maxY + 10)
+                    end
+                    Items.Left:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateCanvas)
+                    Items.Right:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateCanvas)
                     --
                 end 
 
