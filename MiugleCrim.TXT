@@ -2305,7 +2305,8 @@
                     });	Library:Themify(Items.UIStroke, "outline", "Color");
                 -- 
 
-                Items.Page = Library:Create( "ScrollingFrame" , {
+                -- Page directory 
+                    Items.Page = Library:Create( "ScrollingFrame" , {
                         Parent = Library.Other;
                         Name = "\0";
                         Visible = false;
@@ -2319,7 +2320,6 @@
                         ScrollingEnabled = true;
                         ScrollBarThickness = 0; 
                         CanvasSize = dim2(0, 0, 0, 0);
-                        AutomaticCanvasSize = Enum.AutomaticSize.Y;
                         ScrollingDirection = Enum.ScrollingDirection.Y;
                         ClipsDescendants = true;
                     });
@@ -2337,13 +2337,12 @@
                         BackgroundTransparency = 1;
                         Name = "\0";
                         BorderColor3 = rgb(0, 0, 0);
-                        Size = dim2(0, 100, 1, 0); 
-                        AutomaticSize = Enum.AutomaticSize.Y;
+                        Size = dim2(0, 100, 1, 0);
                         BorderSizePixel = 0;
                         BackgroundColor3 = rgb(255, 255, 255)
                     });
                     
-                    Library:Create( "UIListLayout" , {
+                    local leftList = Library:Create( "UIListLayout" , {
                         Parent = Items.Left;
                         Padding = dim(0, 4);
                         SortOrder = Enum.SortOrder.LayoutOrder
@@ -2354,13 +2353,12 @@
                         BackgroundTransparency = 1;
                         Name = "\0";
                         BorderColor3 = rgb(0, 0, 0);
-                        Size = dim2(0, 100, 1, 0); 
-                        AutomaticSize = Enum.AutomaticSize.Y; 
+                        Size = dim2(0, 100, 1, 0);
                         BorderSizePixel = 0;
                         BackgroundColor3 = rgb(255, 255, 255)
                     });
                     
-                    Library:Create( "UIListLayout" , {
+                    local rightList = Library:Create( "UIListLayout" , {
                         Parent = Items.Right;
                         Padding = dim(0, 4);
                         SortOrder = Enum.SortOrder.LayoutOrder;
@@ -2368,12 +2366,24 @@
                     
                     local function updateCanvas()
                         task.defer(function()
-                            local maxY = math.max(Items.Left.AbsoluteSize.Y, Items.Right.AbsoluteSize.Y)
-                            Items.Page.CanvasSize = dim2(0, 0, 0, maxY + 10)
+                            local leftH = leftList.AbsoluteContentSize.Y
+                            local rightH = rightList.AbsoluteContentSize.Y
+                            local maxContentH = math.max(leftH, rightH)
+                            
+                            local pageH = Items.Page.AbsoluteWindowSize.Y
+                            if pageH == 0 then pageH = 500 end
+                            
+                            local newColH = math.max(pageH, maxContentH)
+                            
+                            Items.Left.Size = dim2(0, 100, 0, newColH)
+                            Items.Right.Size = dim2(0, 100, 0, newColH)
+                            Items.Page.CanvasSize = dim2(0, 0, 0, maxContentH + 15)
                         end)
                     end
-                    Items.Left:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateCanvas)
-                    Items.Right:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateCanvas)
+                    
+                    leftList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+                    rightList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+                    Items.Page:GetPropertyChangedSignal("AbsoluteWindowSize"):Connect(updateCanvas)
                 -- 
             end 
 
