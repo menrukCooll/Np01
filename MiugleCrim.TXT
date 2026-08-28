@@ -132,60 +132,9 @@
     local ConfigFlags = Library.ConfigFlags
     local Notifications = Library.Notifications 
 
-    local Fonts = {}; do
-        function RegisterFont(Name, Weight, Style, Asset)
-            if not Asset.Font then return nil end
-            
-            if not isfile(Asset.Id) then
-                pcall(function() writefile(Asset.Id, Asset.Font) end)
-            end
-            
-            if not isfile(Asset.Id) then return nil end
+    Library.Font = Font.fromEnum(Enum.Font.Gotham)
 
-            if isfile(Name .. ".font") then
-                pcall(function() delfile(Name .. ".font") end)
-            end
-
-            local Data = {
-                name = Name,
-                faces = {
-                    {
-                        name = "Normal",
-                        weight = Weight,
-                        style = Style,
-                        assetId = getcustomasset(Asset.Id),
-                    },
-                },
-            }
-
-            pcall(function() writefile(Name .. ".font", HttpService:JSONEncode(Data)) end)
-            if isfile(Name .. ".font") then
-                return getcustomasset(Name .. ".font");
-            end
-            return nil
-        end
-        
-        local fontData = nil
-        local ok = pcall(function()
-            fontData = game:HttpGet("https://github.com/i77lhm/storage/raw/refs/heads/main/fonts/fs-tahoma-8px.ttf")
-        end)
-        if not ok or not fontData or #fontData == 0 then
-            warn("font wont load idk why")
-        end
-        
-        local Verdana = RegisterFont("Verawdawdawdwaddana", 400, "Normal", {
-            Id = "Verdanawdawdwada.ttf",
-            Font = fontData,
-        })
-
-        if Verdana then
-            Library.Font = Font.new(Verdana, Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-        else
-            Library.Font = Font.fromEnum(Enum.Font.Code);
-        end
-
-        -- Р вЂ”Р В°Р С–РЎР‚РЎС“Р В·Р С”Р В° Р С”Р В°РЎР‚РЎвЂљР С‘Р Р…Р С”Р С‘ Р С—Р С• Р С—РЎР‚РЎРЏР СР С•Р в„– РЎРѓРЎРѓРЎвЂ№Р В»Р С”Р Вµ (Р В±Р ВµР В· rbxassetid, Р В±Р ВµР В· Roblox Studio)
-        function Library:LoadImageFromUrl(url, filename)
+    function Library:LoadImageFromUrl(url, filename)
             -- Р вЂњР ВµР Р…Р ВµРЎР‚Р С‘РЎР‚РЎС“Р ВµР С РЎС“Р Р…Р С‘Р С”Р В°Р В»РЎРЉР Р…Р С•Р Вµ Р С‘Р СРЎРЏ РЎвЂћР В°Р в„–Р В»Р В° Р С‘Р В· РЎРѓР В°Р СР С•Р С–Р С• URL (Р Р…Р Вµ Р Т‘Р В»Р С‘Р Р…РЎвЂ№!), РЎРѓР С•РЎвЂ¦РЎР‚Р В°Р Р…РЎРЏР ВµР С РЎР‚Р В°РЎРѓРЎв‚¬Р С‘РЎР‚Р ВµР Р…Р С‘Р Вµ
             if not filename then
                 local ext = url:match("%.(%a+)%??") or "png"
@@ -6154,4 +6103,5 @@
 -- 
 
 return Library, Notifications, themes
+
 
