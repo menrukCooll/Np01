@@ -132,93 +132,42 @@
     local ConfigFlags = Library.ConfigFlags
     local Notifications = Library.Notifications 
 
-    local Fonts = {}; do
-        function RegisterFont(Name, Weight, Style, Asset)
-            if not Asset.Font then return nil end
-            
-            if not isfile(Asset.Id) then
-                pcall(function() writefile(Asset.Id, Asset.Font) end)
-            end
-            
-            if not isfile(Asset.Id) then return nil end
+    -- Мгновенная установка нативного шрифта Roblox
+    Library.Font = Font.fromEnum(Enum.Font.Gotham)
 
-            if isfile(Name .. ".font") then
-                pcall(function() delfile(Name .. ".font") end)
-            end
-
-            local Data = {
-                name = Name,
-                faces = {
-                    {
-                        name = "Normal",
-                        weight = Weight,
-                        style = Style,
-                        assetId = getcustomasset(Asset.Id),
-                    },
-                },
-            }
-
-            pcall(function() writefile(Name .. ".font", HttpService:JSONEncode(Data)) end)
-            if isfile(Name .. ".font") then
-                return getcustomasset(Name .. ".font");
-            end
-            return nil
+    -- Загрузка картинки по прямой ссылке (без rbxassetid, без Roblox Studio)
+    function Library:LoadImageFromUrl(url, filename)
+        -- Генерируем уникальное имя файла из самого URL
+        if not filename then
+            local ext = url:match("%.(%a+)%??") or "png"
+            local slug = url:gsub("[^%w]", ""):sub(-32)
+            filename = "petimage_" .. slug .. "." .. ext
         end
-        
-        local fontData = nil
-        local ok = pcall(function()
-            fontData = game:HttpGet("https://github.com/i77lhm/storage/raw/refs/heads/main/fonts/fs-tahoma-8px.ttf")
-        end)
-        if not ok or not fontData or #fontData == 0 then
-            warn("font wont load idk why")
-        end
-        
-        local Verdana = RegisterFont("Verawdawdawdwaddana", 400, "Normal", {
-            Id = "Verdanawdawdwada.ttf",
-            Font = fontData,
-        })
+        local path = Library.Directory .. "/" .. filename
 
-        if Verdana then
-            Library.Font = Font.new(Verdana, Enum.FontWeight.Regular, Enum.FontStyle.Normal);
-        else
-            Library.Font = Font.fromEnum(Enum.Font.Code);
-        end
-
-        -- Р вЂ”Р В°Р С–РЎР‚РЎС“Р В·Р С”Р В° Р С”Р В°РЎР‚РЎвЂљР С‘Р Р…Р С”Р С‘ Р С—Р С• Р С—РЎР‚РЎРЏР СР С•Р в„– РЎРѓРЎРѓРЎвЂ№Р В»Р С”Р Вµ (Р В±Р ВµР В· rbxassetid, Р В±Р ВµР В· Roblox Studio)
-        function Library:LoadImageFromUrl(url, filename)
-            -- Р вЂњР ВµР Р…Р ВµРЎР‚Р С‘РЎР‚РЎС“Р ВµР С РЎС“Р Р…Р С‘Р С”Р В°Р В»РЎРЉР Р…Р С•Р Вµ Р С‘Р СРЎРЏ РЎвЂћР В°Р в„–Р В»Р В° Р С‘Р В· РЎРѓР В°Р СР С•Р С–Р С• URL (Р Р…Р Вµ Р Т‘Р В»Р С‘Р Р…РЎвЂ№!), РЎРѓР С•РЎвЂ¦РЎР‚Р В°Р Р…РЎРЏР ВµР С РЎР‚Р В°РЎРѓРЎв‚¬Р С‘РЎР‚Р ВµР Р…Р С‘Р Вµ
-            if not filename then
-                local ext = url:match("%.(%a+)%??") or "png"
-                -- Р вЂР ВµРЎР‚РЎвЂР С Р С—Р С•РЎРѓР В»Р ВµР Т‘Р Р…Р С‘Р Вµ 32 РЎРѓР С‘Р СР Р†Р С•Р В»Р В° URL Р С”Р В°Р С” Р’В«Р С—РЎРѓР ВµР Р†Р Т‘Р С•РЎвЂ¦РЎРЊРЎв‚¬Р’В» РІР‚вЂќ Р С”Р С•Р В»Р В»Р С‘Р В·Р С‘Р в„– Р С—РЎР‚Р В°Р С”РЎвЂљР С‘РЎвЂЎР ВµРЎРѓР С”Р С‘ Р Р…Р ВµРЎвЂљ
-                local slug = url:gsub("[^%w]", ""):sub(-32)
-                filename = "petimage_" .. slug .. "." .. ext
-            end
-            local path = Library.Directory .. "/" .. filename
-
-            if not isfile(path) then
-                local ok, data = pcall(function()
-                    return game:HttpGet(url)
-                end)
-
-                if not ok or not data or #data == 0 then
-                    warn("[PetPanel] Р СњР Вµ РЎС“Р Т‘Р В°Р В»Р С•РЎРѓРЎРЉ РЎРѓР С”Р В°РЎвЂЎР В°РЎвЂљРЎРЉ Р С”Р В°РЎР‚РЎвЂљР С‘Р Р…Р С”РЎС“ Р С—Р С• РЎРѓРЎРѓРЎвЂ№Р В»Р С”Р Вµ: " .. tostring(url))
-                    return nil
-                end
-
-                writefile(path, data)
-            end
-
-            local ok, asset = pcall(function()
-                return getcustomasset(path)
+        if not isfile(path) then
+            local ok, data = pcall(function()
+                return game:HttpGet(url)
             end)
 
-            if not ok then
-                warn("[PetPanel] getcustomasset Р Р…Р Вµ РЎРѓРЎР‚Р В°Р В±Р С•РЎвЂљР В°Р В» Р Т‘Р В»РЎРЏ: " .. path)
+            if not ok or not data or #data == 0 then
+                warn("[PetPanel] Не удалось скачать картинку по ссылке: " .. tostring(url))
                 return nil
             end
 
-            return asset
+            writefile(path, data)
         end
+
+        local ok, asset = pcall(function()
+            return getcustomasset(path)
+        end)
+
+        if not ok then
+            warn("[PetPanel] getcustomasset не сработал для: " .. path)
+            return nil
+        end
+
+        return asset
     end
 --
 
