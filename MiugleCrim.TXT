@@ -1427,6 +1427,11 @@
                     pcall(SetFunc, false)
                 end
             end
+            
+            if Notifications.NotificationSound then
+                Notifications.NotificationSound:Destroy()
+                Notifications.NotificationSound = nil
+            end
 
             if Library.Items then 
                 Library.Items:Destroy()
@@ -5251,10 +5256,22 @@
             local Cfg = {
                 Name = properties.Name or "This is a title!";
                 Lifetime = properties.LifeTime or 3;
+                Volume = properties.Volume or 1;
                 
                 Items = {};
                 outline;
             }
+
+            if not Notifications.NotificationSound then
+                local sfx = Instance.new("Sound")
+                sfx.Name = "MiugelHub_NotifSound"
+                sfx.SoundId = "rbxassetid://139770077045729"
+                sfx.Parent = SoundService
+                Notifications.NotificationSound = sfx
+            end
+            
+            Notifications.NotificationSound.Volume = Cfg.Volume
+            Notifications.NotificationSound:Play()
 
             local Items = Cfg.Items; do 
                 Items.Outline = Library:Create( "Frame" , {
@@ -5320,7 +5337,7 @@
                     BorderSizePixel = 0;
                     ZIndex = 100;
                     BackgroundColor3 = themes.preset.accent
-                });	Library:Themify(Items.AccentLine, "accent", "BackgroundColor3")
+                });    Library:Themify(Items.AccentLine, "accent", "BackgroundColor3")
                 
                 Items.Accent = Library:Create( "Frame" , {
                     Parent = Items.Outline;
@@ -5331,14 +5348,12 @@
                     Size = dim2(0, 1, 1, -1);
                     BorderSizePixel = 0;
                     BackgroundColor3 = themes.preset.accent
-                });	Library:Themify(Items.Accent, "accent", "BackgroundColor3")                    
+                });    Library:Themify(Items.Accent, "accent", "BackgroundColor3")                    
             end 
             
             local index = #Notifications.Notifs + 1
             Notifications.Notifs[index] = Items.Outline
 
-            -- Notifications:FadeNotifs(Items.Outline, false)
-            
             local offset = Notifications:RefreshNotifications()
 
             Items.Outline.Position = dim_offset(20, offset)
@@ -5346,7 +5361,6 @@
             Library:Tween(Items.Outline, {AnchorPoint = vec2(0, 0)})
             Library:Tween(Items.AccentLine, {Size = dim2(0, -2, 0, 1)}, TweenInfo.new(Cfg.Lifetime, Enum.EasingStyle.Quint, Enum.EasingDirection.InOut, 0, false, 0))
 
-            print(Items.AccentLine.BackgroundTransparency)
             task.spawn(function()
                 task.wait(Cfg.Lifetime)
                 Notifications.Notifs[index] = nil
