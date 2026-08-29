@@ -2130,7 +2130,7 @@
                         local lastTime = tick()
                         local frameCount = 0
                         
-                        RunService.RenderStepped:Connect(function()
+                        Library:Connection(RunService.RenderStepped, function()
                             frameCount = frameCount + 1
                             
                             -- Р С›Р В±Р Р…Р С•Р Р†Р В»РЎРЏР ВµР С FPS РЎР‚Р В°Р В· Р Р† 10 Р С”Р В°Р Т‘РЎР‚Р С•Р Р†
