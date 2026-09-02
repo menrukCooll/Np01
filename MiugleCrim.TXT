@@ -4566,7 +4566,7 @@
                 Show = properties.ShowInList or true;
 
                 Open = false;
-                Binding;
+                Binding = nil;
                 Ignore = false;
 
                 Items = {}
@@ -5147,7 +5147,7 @@
                 end
             end, Default = true})
 
-            delay(2, function() window.Tweening = false end)
+            task.delay(2, function() window.Tweening = false end)
 
             local Section = Tab:Section({Name = "Other", Side = "Right"})
             Section:Toggle({Name = "Watermark", Flag = "Watermark", Callback = window.ToggleWatermark})
@@ -5270,7 +5270,7 @@
                 Volume = properties.Volume or 1;
                 
                 Items = {};
-                outline;
+                outline = nil;
             }
 
             if not Notifications.NotificationSound then
@@ -6128,3 +6128,4 @@
 -- 
 
 return Library, Notifications, themes
+
