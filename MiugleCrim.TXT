@@ -4122,22 +4122,21 @@
                         BackgroundColor3 = themes.preset.inline
                     });	Library:Themify(Items.Inline, "inline", "BackgroundColor3")
                     
-                    Items.DropdownHolder = Library:Create( "Frame" , {
+                    Items.DropdownHolder = Library:Create( "ScrollingFrame" , {
                         Parent = Items.Inline;
                         Name = "\0";
                         Position = dim2(0, 1, 0, 1);
                         BorderColor3 = rgb(0, 0, 0);
                         Size = dim2(1, -2, 1, -2);
                         BorderSizePixel = 0;
-                        BackgroundColor3 = rgb(255, 255, 255)
-                        
-                        Items.DropdownHolder = Library:Create( "ScrollingFrame" , {
+                        BackgroundColor3 = rgb(255, 255, 255);
+                        ScrollBarThickness = 3;
                         ScrollBarImageColor3 = themes.preset.accent;
                         ScrollingDirection = Enum.ScrollingDirection.Y;
                         CanvasSize = dim2(0, 0, 0, 0);
                         AutomaticCanvasSize = Enum.AutomaticSize.Y;
                     }); Library:Themify(Items.DropdownHolder, "accent", "ScrollBarImageColor3")
-                    
+                                        
                     local gradient = Library:Create( "UIGradient" , {
                         Rotation = 90;
                         Parent = Items.DropdownHolder;
@@ -6128,4 +6127,3 @@
 -- 
 
 return Library, Notifications, themes
-
