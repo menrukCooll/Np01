@@ -4022,11 +4022,12 @@
                     BackgroundColor3 = rgb(255, 255, 255)
                 });
 
+                -- Убрал текстовый мусор внутри кнопки, теперь она чистая
                 Items.InnerText = Library:Create( "TextLabel" , {
                     FontFace = Library.Font;
                     TextColor3 = themes.preset.text_color;
                     BorderColor3 = rgb(0, 0, 0);
-                    Text = "Closest";
+                    Text = ""; 
                     Parent = Items.Background;
                     Name = "\0";
                     Size = dim2(0, 0, 1, 0);
@@ -4036,11 +4037,6 @@
                     AutomaticSize = Enum.AutomaticSize.XY;
                     TextSize = 12;
                     BackgroundColor3 = rgb(255, 255, 255)
-                });
-
-                Library:Create( "UIStroke" , {
-                    Parent = Items.InnerText;
-                    LineJoinMode = Enum.LineJoinMode.Miter
                 });
 
                 local gradient = Library:Create( "UIGradient" , {
@@ -4053,7 +4049,7 @@
                     FontFace = Library.Font;
                     TextColor3 = themes.preset.text_color;
                     BorderColor3 = rgb(0, 0, 0);
-                    Text = Cfg.Multi and "..." or "-";
+                    Text = "+";
                     Parent = Items.Background;
                     Name = "\0";
                     AnchorPoint = vec2(1, 0);
@@ -4091,7 +4087,7 @@
                     LineJoinMode = Enum.LineJoinMode.Miter
                 });
                 
-                -- ================= ФИКС СЛОЕВ (ZIndex) =================
+                -- ================= ФИКС СЛОЕВ (ZIndex = 50+) =================
                 Items.DropdownElements = Library:Create( "Frame" , {
                     Parent = Library.Other;
                     Size = dim2(0, 0, 0, 0);
@@ -4101,7 +4097,7 @@
                     BorderSizePixel = 0;
                     ClipsDescendants = true;
                     BackgroundColor3 = themes.preset.outline;
-                    ZIndex = 50; -- ПОДНИМАЕМ ПОВЕРХ ВСЕХ ВКЛАДОК
+                    ZIndex = 50; 
                 });    Library:Themify(Items.DropdownElements, "outline", "BackgroundColor3")
                 
                 Items.DropInline = Library:Create( "Frame" , {
@@ -4139,7 +4135,8 @@
                 
                 Library:Create( "UIListLayout" , {
                     Parent = Items.DropdownHolder;
-                    SortOrder = Enum.SortOrder.LayoutOrder
+                    SortOrder = Enum.SortOrder.LayoutOrder;
+                    Padding = dim(0, 2);
                 });                
             end 
 
@@ -4150,13 +4147,12 @@
                     BorderColor3 = rgb(0, 0, 0);
                     Text = text;
                     Parent = Items.DropdownHolder;
-                    Name = "\0";
+                    Name = text;
                     ZIndex = 53;
-                    Size = dim2(1, 0, 0, 0);
+                    Size = dim2(1, 0, 0, 18);
                     BackgroundTransparency = 1;
                     TextXAlignment = Enum.TextXAlignment.Left;
                     BorderSizePixel = 0;
-                    AutomaticSize = Enum.AutomaticSize.XY;
                     TextSize = 12;
                     BackgroundColor3 = rgb(255, 255, 255)
                 });
@@ -4166,15 +4162,34 @@
                     LineJoinMode = Enum.LineJoinMode.Miter
                 });
                 
+                -- Отступ текста, чтобы освободить место для кубика слева
                 Library:Create( "UIPadding" , {
-                    PaddingTop = dim(0, 3);
-                    PaddingBottom = dim(0, 3);
                     Parent = Button;
-                    PaddingRight = dim(0, 3);
-                    PaddingLeft = dim(0, 3)
+                    PaddingLeft = dim(0, 22); 
+                    PaddingTop = dim(0, 2);
+                    PaddingBottom = dim(0, 2);
                 });          
 
-                table.insert(Cfg.OptionInstances, Button)
+                -- ДОБАВЛЕНИЕ ПУСТОГО КУБИКА (ЧЕКБОКСА) СЛЕВА
+                local Checkbox = Library:Create("Frame", {
+                    Parent = Button;
+                    Name = "Checkbox";
+                    Size = dim2(0, 10, 0, 10);
+                    AnchorPoint = vec2(0, 0.5);
+                    Position = dim2(0, -16, 0.5, 0);
+                    BackgroundColor3 = themes.preset.inline; 
+                    BorderSizePixel = 0;
+                    ZIndex = 54;
+                }); Library:Themify(Checkbox, "inline", "BackgroundColor3")
+                
+                Library:Create("UIStroke", {
+                    Parent = Checkbox;
+                    Color = themes.preset.outline;
+                    LineJoinMode = Enum.LineJoinMode.Miter;
+                    Thickness = 1;
+                }); Library:Themify(Checkbox.UIStroke, "outline", "Color")
+
+                table.insert(Cfg.OptionInstances, {Button = Button, Checkbox = Checkbox, Text = text})
 
                 return Button
             end
@@ -4185,16 +4200,14 @@
                 end
 
                 local optionCount = #Cfg.OptionInstances
-                local targetHeight = math.clamp((optionCount * 18) + 4, 0, 160)
+                local targetHeight = math.clamp((optionCount * 20) + 4, 0, 160)
 
                 Items.DropdownElements.Position = dim2(0, Items.Outline.AbsolutePosition.X, 0, Items.Outline.AbsolutePosition.Y + 20)
                 Items.DropdownElements.Size = dim_offset(Items.Outline.AbsoluteSize.X, bool and targetHeight or 0)
                 Items.DropdownElements.Visible = bool 
                 Items.DropdownElements.Parent = bool and Library.Items or Library.Other; 
 
-                if not Cfg.Multi then 
-                    Items.Icon.Text = bool and "+" or "-"
-                end
+                Items.Icon.Text = bool and "-" or "+"
                 
                 Library.OpenElement = Cfg
             end
@@ -4203,41 +4216,44 @@
                 local Selected = {}
                 local IsTable = type(value) == "table"
 
-                for _,option in Cfg.OptionInstances do 
-                    if option.Text == value or (IsTable and table.find(value, option.Text)) then 
-                        table.insert(Selected, option.Text)
+                for _, optionData in ipairs(Cfg.OptionInstances) do 
+                    local isSelected = optionData.Text == value or (IsTable and table.find(value, optionData.Text))
+                    
+                    if isSelected then 
+                        table.insert(Selected, optionData.Text)
                         Cfg.MultiItems = Selected
-                        option.TextColor3 = themes.preset.text_color
+                        optionData.Button.TextColor3 = themes.preset.text_color
+                        -- Кубик загорается цветом гуи
+                        optionData.Checkbox.BackgroundColor3 = themes.preset.accent
                     else
-                        option.TextColor3 = rgb(179, 179, 179)
-                        option.BackgroundTransparency = 1
+                        optionData.Button.TextColor3 = rgb(179, 179, 179)
+                        -- Кубик пустой/тёмный
+                        optionData.Checkbox.BackgroundColor3 = themes.preset.inline
                     end
                 end
 
-                Items.InnerText.Text = if IsTable then table.concat(Selected, ", ") else Selected[1] or ""
                 Flags[Cfg.Flag] = if IsTable then Selected else Selected[1]
-                
                 Cfg.Callback(Flags[Cfg.Flag]) 
             end
             
             function Cfg.RefreshOptions(options) 
-                for _,option in Cfg.OptionInstances do 
-                    option:Destroy() 
+                for _, optionData in ipairs(Cfg.OptionInstances) do 
+                    optionData.Button:Destroy() 
                 end
                 
                 Cfg.OptionInstances = {} 
 
-                for _,option in options do
-                    local Button = Cfg.RenderOption(option)
+                for _, optionText in ipairs(options) do
+                    local Button = Cfg.RenderOption(optionText)
                     
                     Button.MouseButton1Down:Connect(function()
                         if Cfg.Multi then 
-                            local Selected = table.find(Cfg.MultiItems, Button.Text)
+                            local SelectedIndex = table.find(Cfg.MultiItems, optionText)
                             
-                            if Selected then 
-                                table.remove(Cfg.MultiItems, Selected)
+                            if SelectedIndex then 
+                                table.remove(Cfg.MultiItems, SelectedIndex)
                             else
-                                table.insert(Cfg.MultiItems, Button.Text)
+                                table.insert(Cfg.MultiItems, optionText)
                             end
                             
                             Cfg.Set(Cfg.MultiItems)                 
@@ -4245,7 +4261,7 @@
                             Cfg.SetVisible(false)
                             Cfg.Open = false
                             
-                            Cfg.Set(Button.Text)
+                            Cfg.Set(optionText)
                         end
                     end)
                 end
@@ -4253,6 +4269,8 @@
                 if Cfg.Open then
                     Cfg.SetVisible(true)
                 end
+                
+                Cfg.Set(Flags[Cfg.Flag] or Cfg.Default)
             end
 
             Items.Outline.MouseButton1Click:Connect(function()
@@ -4277,7 +4295,7 @@
                 
             return setmetatable(Cfg, Library)
         end
-
+        
         function Library:Label(properties)
             local Cfg = {
                 Name = properties.Name or "Label",
