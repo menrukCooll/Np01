@@ -773,7 +773,7 @@ Library.WatermarkUpdating = false
 local HWID = gethwid and gethwid() or game:GetService("RbxAnalyticsService"):GetClientId()
 local ValidKeys = {
     ["MENRUKCOOLKEY112"] = "d72013855fb5edb49c4a8199cea6c2213895f5fadc151694337b41d552e30c4d47dbfd3359c365c67aba3589619bbe90208c1b3d611376cab4126dcdfaf78fa7",
-    ["FAFNERCCOOLKEY333"] = "qqdqwed112313"
+    ["FAFNERCCOOLKEY333"] = "qqdqwed112313",
     ["VODOLAZ"] = "7b31636136393133372d393339352d313166312d396431362d3830366536663665363936337d"
 }
 
